@@ -4,7 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Models\User;
+
+//use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
 {
@@ -19,7 +23,7 @@ class LoginController extends Controller
     |
     */
 
-    use AuthenticatesUsers;
+    //use AuthenticatesUsers;
 
     /**
      * Where to redirect users after login.
@@ -36,5 +40,38 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function logout(Request $request){
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
+    }
+
+    public function login(){
+        return view('auth/login');
+    }
+
+    public function authenticate(Request $request)
+    {
+        //Buscar el usuario admin en db
+        $u_admin = User::all()->first();
+
+        //validar credenciales ingresadas
+        $credentials = $request->validate([
+            'password' => ['required'],
+        ]);
+        $credentials = $credentials + ['email'=>$u_admin->email];
+        
+        if(Auth::attempt($credentials)){
+            $request->session()->regenerate();
+            return redirect('home');
+        }
+
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ]);
+        
     }
 }

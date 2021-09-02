@@ -17,7 +17,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes(['register' => false,]);
+//Auth::routes(['register' => false,]);
+//Login
+Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
+Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'authenticate'])->name('login');
+Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
