@@ -23,6 +23,10 @@ Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']
 Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'authenticate'])->name('login');
 Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
+//register 
+Route::post('/register', [App\Http\Controllers\Auth\LoginController::class, 'register'])->name('register');
+
+
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::apiResource('/plantas', App\Http\Controllers\PlantaController::class);

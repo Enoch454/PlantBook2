@@ -7,6 +7,11 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+
+
 
 //use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
@@ -42,6 +47,22 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+
+    public function register(Request $request){
+        $password = Str::random(5);
+        
+        DB::table('users')->insert([
+            'name' => $request->name,
+            'email' => $request->email,
+            'email_verified_at' => now(),
+            'password' => Hash::make($password),
+            'remember_token' => Str::random(10),            
+        ]);
+
+        return $password;
+
+    }
+
     public function logout(Request $request){
         Auth::logout();
         $request->session()->invalidate();
@@ -49,8 +70,13 @@ class LoginController extends Controller
         return redirect('/');
     }
 
+
     public function login(){
-        return view('auth/login');
+        if(User::all()->count() == 1){
+            return view('auth/login');
+        }
+        return view('auth/register');
+
     }
 
     public function authenticate(Request $request)
