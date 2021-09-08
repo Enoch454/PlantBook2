@@ -3,7 +3,11 @@
 @section('content')
 <div class="container-lg">
     <div class="row justify-content-center">
-        <home-component/>
+        @guest
+            <home-component/>
+        @else
+            <dashboard-component/>
+        @endguest
     </div>
 </div>
 @endsection

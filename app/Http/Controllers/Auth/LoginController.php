@@ -59,6 +59,8 @@ class LoginController extends Controller
             'remember_token' => Str::random(10),            
         ]);
 
+        //aquí deberia haber una notificacion a correo electronico
+        //y redireccion al login
         return $password;
 
     }
@@ -92,7 +94,7 @@ class LoginController extends Controller
         
         if(Auth::attempt($credentials)){
             $request->session()->regenerate();
-            return redirect('home');
+            return redirect('/');
         }
 
         return back()->withErrors([
