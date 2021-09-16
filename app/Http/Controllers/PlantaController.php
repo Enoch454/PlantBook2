@@ -8,6 +8,16 @@ use Illuminate\Http\Request;
 class PlantaController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+    
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -25,10 +35,20 @@ class PlantaController extends Controller
      */
     public function store(Request $request)
     {
-        $planta = $request->all();
-        if($request->hasFile('pathImagen')){
-            $planta['pathImagen'] = $request->file('pathImage')->store('planta_img');
-        }
+        $planta = [
+            'nombre' => $request->nombre,
+            'nCientifico' => $request->nCientifico,
+            'nAlterno' => $request->nAlterno,
+            'info' => $request->info,
+            //el metodo store devuelve la ubicacion a partir del fichero public,
+            //sin embargo, la peticion get para obtener la imagen solo pide la
+            //direccion a partir de planta_img. Por ello, se procesa la cadena 
+            //para que cumpla con ese formato.
+            'pathImagen' => substr($request->pathImagen->store('public/planta_img'), 7),
+        ];
+//        if($request->hasFile('pathImagen')){
+//            $planta['pathImagen'] = $request->file('pathImagen')->store('planta_img');
+//        }
         Planta::create($planta);
     }
 

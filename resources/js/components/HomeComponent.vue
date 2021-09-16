@@ -19,7 +19,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <img
-                                        alt="una flor"
+                                        v-bind:alt=planta_seleccionada.nombre
                                         class="img-fluid rounded"
                                         v-bind:src="get_pathImagen(planta_seleccionada.plantaImagen)"
                                     />
@@ -56,7 +56,7 @@
                         <img
                             v-bind:src="get_pathImagen(planta.pathImagen)"
                             class="zoom img-fluid " 
-                            alt="una flor"
+                            v-bind:alt=planta.nombre
                         >
                     </div>    
                 </div>

@@ -1942,22 +1942,58 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      //lista completa de plantas
       lista_plantas: [],
-      planta_seleccionada: {
+      //objeto donde se colocan los datos de una planta nueva o a editar
+      planta_temp: {
         info: "",
         nAlterno: "",
         nCientifico: "",
         nombre: "",
-        pathImagen: ""
+        pathImagen: null
       },
+      //si el modal esta mostrandose o no
       modalActivo: false,
+      //si se está editando una ficha de una planta
+      editandoRegistro: true,
+      //el texto que tiene la barra de busqueda escrito
       term_busqueda: ""
     };
   },
   methods: {
+    //Hace peticion a la api local para recibir la lista de las plantas y sus datos
     listar: function listar() {
       var _this = this;
 
@@ -1982,29 +2018,107 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee);
       }))();
     },
+    //se usa para obtener la direccion completa de una imagen
     get_pathImagen: function get_pathImagen(path_imagen) {
       var path = "http://" + window.location.host + "/storage/" + path_imagen;
       console.log(path);
       return path;
     },
-    seleccionar: function seleccionar(planta) {
-      this.planta_seleccionada.info = planta.info;
-      this.planta_seleccionada.nAlterno = planta.nAlterno;
-      this.planta_seleccionada.nCientifico = planta.nCientifico;
-      this.planta_seleccionada.nombre = planta.nombre;
-      this.planta_seleccionada.plantaImagen = planta.pathImagen;
-      this.modalActivo = true;
-      console.log(this.planta_seleccionada);
+    //evento que carga una imagen al formulario
+    onFileSelected: function onFileSelected(event) {
+      this.planta_temp.pathImagen = event.target.files[0];
+      console.log(this.planta_temp.pathImagen);
     },
+    //toma los datos en planta_temp para enviarlos a la api local, ya sea par actualizar un 
+    //registo o para crear uno nuevo
+    guardarPlanta: function guardarPlanta() {
+      var _this2 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+        var formData, res, _res;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                formData = new FormData();
+                formData.append('pathImagen', _this2.planta_temp.pathImagen, _this2.planta_temp.pathImagen.name);
+                formData.append('info', _this2.planta_temp.info);
+                formData.append('nAlterno', _this2.planta_temp.nAlterno);
+                formData.append('nCientifico', _this2.planta_temp.nCientifico);
+                formData.append('nombre', _this2.planta_temp.nombre);
+
+                if (!_this2.editandoRegistro) {
+                  _context2.next = 12;
+                  break;
+                }
+
+                _context2.next = 9;
+                return axios.put('/plantas/' + _this2.planta_temp.id, _this2.planta_temp);
+
+              case 9:
+                res = _context2.sent;
+                _context2.next = 15;
+                break;
+
+              case 12:
+                _context2.next = 14;
+                return axios.post('/plantas', formData);
+
+              case 14:
+                _res = _context2.sent;
+
+              case 15:
+                _this2.cerrarModal();
+
+                _this2.listar();
+
+              case 17:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    //muestra el modal en pantalla y prepara el contenido de sus campos input
+    //ya sea para editar o crear
+    abrirModal: function abrirModal() {
+      var planta = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      this.modalActivo = true;
+
+      if (this.editandoRegistro) {
+        this.planta_temp.id = planta.id;
+        this.planta_temp.info = planta.info;
+        this.planta_temp.nAlterno = planta.nAlterno;
+        this.planta_temp.nCientifico = planta.nCientifico;
+        this.planta_temp.nombre = planta.nombre;
+        this.planta_temp.plantaImagen = null;
+        document.getElementById("file-modal").value = '';
+      } else {
+        this.planta_temp.id = planta.id;
+        this.planta_temp.info = '';
+        this.planta_temp.nAlterno = '';
+        this.planta_temp.nCientifico = '';
+        this.planta_temp.nombre = '';
+        this.planta_temp.plantaImagen = null;
+        document.getElementById("file-modal").value = '';
+      }
+
+      console.log(planta);
+    },
+    //deja de mostrar el modal en pantalla
     cerrarModal: function cerrarModal() {
       this.modalActivo = false;
     },
+    //concatena algunos datos de la planta que se le indica
     get_full_text: function get_full_text(planta) {
       var full_text =
       /*planta.info + */
       " " + planta.nombre + " " + planta.nCientifico + " " + planta.nAlterno + " ";
       return full_text;
     },
+    //indica si una planta dada coincide con el valor en "term_busqueda"
     busqueda: function busqueda(planta) {
       if (this.term_busqueda == '') {
         return true;
@@ -2013,6 +2127,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return full_text.toLocaleLowerCase().includes(this.term_busqueda.toLocaleLowerCase());
       }
     },
+    //usa la funcion busqueda para generar una lista de las plantas que coinciden con el
+    //termino de busqueda. Como indica la condicion en busqueda(), si esta vacio "term_busqueda",
+    //entonces se muestran todos los que haya.
     filtrar_lista: function filtrar_lista() {
       var lista = [];
 
@@ -6759,7 +6876,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.mostrar{\n        display: list-item;\n        opacity: 1;\n        background: rgba(43, 43, 43, 0.705);\n}\n    \n   \n   /*body {\n    background-color:#1d1d1d !important;\n    font-family: \"Asap\", sans-serif;\n    color:#989898;\n    margin:10px;\n    font-size:16px;\n    }*/\n#demo {\n        height:100%;\n        position:relative;\n        overflow:hidden;\n}\n.green{\n        background-color:#6fb936;\n}\n.thumb{\n        margin-bottom: 30px;\n}\n.page-top{\n        margin-top:85px;\n}\nimg.zoom {\n        width: 100%;\n        height: 200px;\n        border-radius:5px;\n        -o-object-fit:cover;\n           object-fit:cover;\n        /*-webkit-transition: all .3s ease-in-out;\n        -moz-transition: all .3s ease-in-out;\n        -o-transition: all .3s ease-in-out;\n        -ms-transition: all .3s ease-in-out;\n        */\n}\n.transition {\n        transform: scale(1.2);\n}\n.modal-header {\n    \n        border-bottom: none;\n}\n.modal-title {\n        color:#000;\n}\n.modal-footer{\n    display:none;\n}\n\n/* Form barra de busqueda */\nheader form{\n        width: 100%;\n        display: flex;\n        justify-content: center;\n        margin-bottom: 20px;\n}\nheader .barra-busqueda{\n        width: 70%;\n        height: 40px;\n        line-height: 40px;\n        background: #ffffff;\n        padding: 0 20px;\n        border-radius: 100px;\n        border: none;\n        text-align: center;\n        font-size: 16px;\n}\n\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.mostrar{\n        display: list-item;\n        opacity: 1;\n        background: rgba(43, 43, 43, 0.705);\n}\n.botones-edit{\n        margin: auto;\n        margin-bottom: 15px;\n}\n   \n   /*body {\n    background-color:#1d1d1d !important;\n    font-family: \"Asap\", sans-serif;\n    color:#989898;\n    margin:10px;\n    font-size:16px;\n    }*/\n#demo {\n        height:100%;\n        position:relative;\n        overflow:hidden;\n}\n.green{\n        background-color:#6fb936;\n}\n.thumb{\n        margin-bottom: 30px;\n}\n.page-top{\n        margin-top:85px;\n}\nimg.zoom {\n        width: 100%;\n        height: 200px;\n        border-radius:5px;\n        -o-object-fit:cover;\n           object-fit:cover;\n        /*-webkit-transition: all .3s ease-in-out;\n        -moz-transition: all .3s ease-in-out;\n        -o-transition: all .3s ease-in-out;\n        -ms-transition: all .3s ease-in-out;\n        */\n}\n.transition {\n        transform: scale(1.2);\n}\n.modal-header {\n    \n        border-bottom: none;\n}\n.modal-title {\n        color:#000;\n}\n.modal-footer{\n    display:none;\n}\n\n/* Form barra de busqueda */\nheader form{\n        width: 100%;\n        display: flex;\n        justify-content: center;\n        margin-bottom: 20px;\n}\nheader .barra-busqueda{\n        width: 70%;\n        height: 40px;\n        line-height: 40px;\n        background: #ffffff;\n        padding: 0 20px;\n        border-radius: 100px;\n        border: none;\n        text-align: center;\n        font-size: 16px;\n}\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -39108,13 +39225,69 @@ var render = function() {
           _c("div", { staticClass: "modal-content" }, [
             _c("div", { staticClass: "modal-header" }, [
               _c("div", [
-                _c("h4", { staticClass: "modal-title" }, [
-                  _vm._v(_vm._s(_vm.planta_seleccionada.nombre))
-                ]),
+                _vm._m(0),
                 _vm._v(" "),
-                _c("h6", { staticClass: "modal-title" }, [
-                  _vm._v(_vm._s(_vm.planta_seleccionada.nCientifico))
-                ])
+                _c("br"),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.planta_temp.nombre,
+                      expression: "planta_temp.nombre"
+                    }
+                  ],
+                  attrs: {
+                    type: "text",
+                    id: "nombre-planta",
+                    placeholder: "Nombre de la planta"
+                  },
+                  domProps: { value: _vm.planta_temp.nombre },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.planta_temp, "nombre", $event.target.value)
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c("br"),
+                _vm._v(" "),
+                _vm._m(1),
+                _vm._v(" "),
+                _c("br"),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.planta_temp.nCientifico,
+                      expression: "planta_temp.nCientifico"
+                    }
+                  ],
+                  attrs: {
+                    type: "text",
+                    id: "nCientifico-planta",
+                    placeholder: "Nombre cientifico de la planta"
+                  },
+                  domProps: { value: _vm.planta_temp.nCientifico },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(
+                        _vm.planta_temp,
+                        "nCientifico",
+                        $event.target.value
+                      )
+                    }
+                  }
+                })
               ]),
               _vm._v(" "),
               _c(
@@ -39144,33 +39317,112 @@ var render = function() {
               _c("div", { staticClass: "container-fluid" }, [
                 _c("div", { staticClass: "row" }, [
                   _c("div", { staticClass: "col-md-4" }, [
-                    _c("img", {
-                      staticClass: "img-fluid rounded",
-                      attrs: {
-                        alt: "una flor",
-                        src: _vm.get_pathImagen(
-                          _vm.planta_seleccionada.plantaImagen
-                        )
-                      }
+                    _c("input", {
+                      staticClass: "form-control-file",
+                      attrs: { type: "file", id: "file-modal" },
+                      on: { change: _vm.onFileSelected }
                     })
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-md-8" }, [
-                    _c("p", [_vm._v(_vm._s(_vm.planta_seleccionada.info))]),
+                    _c("textarea", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.planta_temp.info,
+                          expression: "planta_temp.info"
+                        }
+                      ],
+                      attrs: {
+                        required: "",
+                        rows: "10",
+                        id: "info-planta",
+                        placeholder:
+                          "Informacion y datos importantes sobre la planta"
+                      },
+                      domProps: { value: _vm.planta_temp.info },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.planta_temp, "info", $event.target.value)
+                        }
+                      }
+                    }),
                     _vm._v(" "),
                     _c("p", [_vm._v("Tambien conocido como")]),
                     _vm._v(" "),
-                    _c("p", [_vm._v(_vm._s(_vm.planta_seleccionada.nAlterno))])
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.planta_temp.nAlterno,
+                          expression: "planta_temp.nAlterno"
+                        }
+                      ],
+                      attrs: {
+                        type: "text",
+                        id: "nAlterno-planta",
+                        placeholder:
+                          "Otros nombres por lo que llaman a la planta"
+                      },
+                      domProps: { value: _vm.planta_temp.nAlterno },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.planta_temp,
+                            "nAlterno",
+                            $event.target.value
+                          )
+                        }
+                      }
+                    })
                   ])
                 ])
               ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "botones-edit" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  attrs: { type: "button" },
+                  on: {
+                    click: function($event) {
+                      return _vm.guardarPlanta()
+                    }
+                  }
+                },
+                [_vm._v("Guardar")]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-secondary",
+                  attrs: { type: "button" },
+                  on: {
+                    click: function($event) {
+                      return _vm.cerrarModal()
+                    }
+                  }
+                },
+                [_vm._v("Descartar")]
+              )
             ])
           ])
         ])
       ]
     ),
     _vm._v(" "),
-    _c("h1", [_vm._v("your dashboard cooming soon")]),
+    _c("h1", [_vm._v("Your Dashboard")]),
     _vm._v(" "),
     _c("header", [
       _c("form", { attrs: { action: "" } }, [
@@ -39202,41 +39454,79 @@ var render = function() {
       _c(
         "div",
         { staticClass: "row" },
-        _vm._l(this.filtrar_lista(_vm.lista_plantas), function(planta) {
-          return _c(
-            "div",
-            { key: planta.id, staticClass: "col-lg-3 col-md-4 col-xs-6 thumb" },
-            [
-              _c(
-                "div",
-                {
-                  staticClass: "fancybox",
-                  attrs: { rel: "ligthbox" },
-                  on: {
-                    click: function($event) {
-                      return _vm.seleccionar(planta)
+        [
+          _vm._l(this.filtrar_lista(_vm.lista_plantas), function(planta) {
+            return _c(
+              "div",
+              {
+                key: planta.id,
+                staticClass: "col-lg-3 col-md-4 col-xs-6 thumb"
+              },
+              [
+                _c(
+                  "div",
+                  {
+                    staticClass: "fancybox",
+                    attrs: { rel: "ligthbox" },
+                    on: {
+                      click: function($event) {
+                        _vm.editandoRegistro = true
+                        _vm.abrirModal(planta)
+                      }
                     }
+                  },
+                  [
+                    _c("img", {
+                      staticClass: "zoom img-fluid ",
+                      attrs: {
+                        src: _vm.get_pathImagen(planta.pathImagen),
+                        alt: planta.nombre
+                      }
+                    })
+                  ]
+                )
+              ]
+            )
+          }),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-lg-3 col-md-4 col-xs-6 thumb" }, [
+            _c("div", { staticClass: "fancybox", attrs: { rel: "lightbox" } }, [
+              _c("img", {
+                staticClass: "zoom img-fluid ",
+                attrs: { src: _vm.get_pathImagen("plus-sign.png") },
+                on: {
+                  click: function($event) {
+                    _vm.editandoRegistro = false
+                    _vm.abrirModal()
                   }
-                },
-                [
-                  _c("img", {
-                    staticClass: "zoom img-fluid ",
-                    attrs: {
-                      src: _vm.get_pathImagen(planta.pathImagen),
-                      alt: "una flor"
-                    }
-                  })
-                ]
-              )
-            ]
-          )
-        }),
-        0
+                }
+              })
+            ])
+          ])
+        ],
+        2
       )
     ])
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { attrs: { for: "nombre" } }, [
+      _c("h4", { staticClass: "modal-title" }, [_vm._v("Nombre")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("label", { attrs: { for: "nCientifico" } }, [
+      _c("h6", { staticClass: "modal-title" }, [_vm._v("Nombre Cientifico")])
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -39311,7 +39601,7 @@ var render = function() {
                     _c("img", {
                       staticClass: "img-fluid rounded",
                       attrs: {
-                        alt: "una flor",
+                        alt: _vm.planta_seleccionada.nombre,
                         src: _vm.get_pathImagen(
                           _vm.planta_seleccionada.plantaImagen
                         )
@@ -39385,7 +39675,7 @@ var render = function() {
                     staticClass: "zoom img-fluid ",
                     attrs: {
                       src: _vm.get_pathImagen(planta.pathImagen),
-                      alt: "una flor"
+                      alt: planta.nombre
                     }
                   })
                 ]

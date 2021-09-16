@@ -44,6 +44,8 @@ class LoginController extends Controller
      */
     public function __construct()
     {
+        //directiva de acceso, solo un usuario visitante puede usar estas
+        //funciones, exepto para la funcion logout
         $this->middleware('guest')->except('logout');
     }
 

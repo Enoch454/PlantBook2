@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Planta extends Model
 {
     use HasFactory;
-    //protected $fillable = [];
+    //campos en el objeto "Planta" habilitados para ser llenados
+    protected $fillable = [
+        'info',
+        'nombre',
+        'nCientifico',
+        'nAlterno',
+        'pathImagen',
+    ];
     
 }
