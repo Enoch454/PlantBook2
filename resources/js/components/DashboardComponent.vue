@@ -117,7 +117,7 @@
                     nAlterno:"",
                     nCientifico:"",
                     nombre:"",
-                    pathImagen:null,
+                    pathImagen:"",
                 },
                 //si el modal esta mostrandose o no
                 modalActivo: false,
@@ -136,29 +136,62 @@
             //se usa para obtener la direccion completa de una imagen
             get_pathImagen(path_imagen){
                 var path = "http://"+window.location.host+"/storage/"+path_imagen;
-                console.log(path)
+                //console.log(path)
                 return path;
             },
             //evento que carga una imagen al formulario
             onFileSelected(event){
                 this.planta_temp.pathImagen = event.target.files[0];
+                console.log("metodo: onFileSelected()")
                 console.log(this.planta_temp.pathImagen);
             },
             //toma los datos en planta_temp para enviarlos a la api local, ya sea par actualizar un 
             //registo o para crear uno nuevo
             async guardarPlanta(){
                 var formData = new FormData();
-                formData.append('pathImagen', this.planta_temp.pathImagen, this.planta_temp.pathImagen.name);
-                formData.append('info', this.planta_temp.info);
-                formData.append('nAlterno', this.planta_temp.nAlterno);
-                formData.append('nCientifico', this.planta_temp.nCientifico);
-                formData.append('nombre', this.planta_temp.nombre);
                 
+                console.log("metodo: guardarPlanta()")
+                console.log(this.planta_temp)
+
                 if(this.editandoRegistro){
-                    const res = await axios.put('/plantas/'+this.planta_temp.id, this.planta_temp);
+                    //---NOTA---
+                    //Aparentemente funciona para enviar peticion put en json
+                    //pero omite el contenido binario (archivo e imagenes)
+                    //Sospecho que tendré que hacer un recurso enfocado solo
+                    //a la actualizacion de la imagen y definir las conficiones
+                    //para usar dicho recurso
+                    
+                    /*
+                    const params = new URLSearchParams();
+                    params.append('pathImagen', this.planta_temp.pathImagen);
+                    params.append('info', this.planta_temp.info);
+                    params.append('nAlterno', this.planta_temp.nAlterno);
+                    params.append('nCientifico', this.planta_temp.nCientifico);
+                    params.append('nombre', this.planta_temp.nombre);
+                    */
+
+                    const qs = require('qs');
+
+/*
+                    formData.append('pathImagen', this.planta_temp.pathImagen);
+                    formData.append('info', this.planta_temp.info);
+                    formData.append('nAlterno', this.planta_temp.nAlterno);
+                    formData.append('nCientifico', this.planta_temp.nCientifico);
+                    formData.append('nombre', this.planta_temp.nombre);
+*/
+
+                    const res = await axios.put('/plantas/'+this.planta_temp.id, qs.stringify(this.planta_temp));
+                    
                 }else{
+                    formData.append('pathImagen', this.planta_temp.pathImagen, this.planta_temp.pathImagen.name);
+                    formData.append('info', this.planta_temp.info);
+                    formData.append('nAlterno', this.planta_temp.nAlterno);
+                    formData.append('nCientifico', this.planta_temp.nCientifico);
+                    formData.append('nombre', this.planta_temp.nombre);
+
                     const res = await axios.post('/plantas', formData);
                 }
+
                 this.cerrarModal();
                 this.listar();
             },
@@ -172,7 +205,7 @@
                     this.planta_temp.nAlterno = planta.nAlterno;
                     this.planta_temp.nCientifico = planta.nCientifico;
                     this.planta_temp.nombre = planta.nombre;
-                    this.planta_temp.plantaImagen = null;
+                    //this.planta_temp.plantaImagen = null;
                     document.getElementById("file-modal").value = '';
                 }else{
                     this.planta_temp.id = planta.id;
@@ -180,10 +213,10 @@
                     this.planta_temp.nAlterno = '';
                     this.planta_temp.nCientifico = '';
                     this.planta_temp.nombre = '';
-                    this.planta_temp.plantaImagen = null;
+                    //this.planta_temp.plantaImagen = null;
                     document.getElementById("file-modal").value = '';
                 }
-                
+                console.log("metodo: abrirModal()")
                 console.log(planta);
             },
             //deja de mostrar el modal en pantalla

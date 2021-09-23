@@ -72,20 +72,17 @@ class PlantaController extends Controller
      */
     public function update(Request $request, Planta $planta)
     {
-        /*
-        $planta = $request->all();
+        $planta->nombre = $request->nombre;
+        $planta->ncientifico = $request->nCientifico;
+        $planta->nAlterno = $request->nAlterno;
+        $planta->info = $request->info;
+     
         if($request->hasFile('pathImagen')){
-            $planta['pathImagen'] = $request->file('pathImage')->store('planta_img');
+            $planta->pathImagen = substr($request->pathImagen->store('public/planta_img'), 7);
         }
-        Planta::create($planta);
-        */
-        // posible falla con la actualziacion de la imagen, pendiente de checar
 
-        $new_planta = $request->all();
-        if($request->hasFile('pathImagen')){
-            $new_planta['pathImagen'] = $request->file('pathImage')->store('planta_img');
-        }
-        $planta->update($new_planta);
+        //$planta->update($new_planta);
+        $planta->save();
 
     }
 
