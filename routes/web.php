@@ -30,3 +30,4 @@ Route::post('/register', [App\Http\Controllers\Auth\LoginController::class, 'reg
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::apiResource('/plantas', App\Http\Controllers\PlantaController::class);
+Route::post('/plantas_update_img', [App\Http\Controllers\PlantaController::class, 'updateImg'])->name('updateImg');

@@ -160,27 +160,17 @@
                     //Sospecho que tendré que hacer un recurso enfocado solo
                     //a la actualizacion de la imagen y definir las conficiones
                     //para usar dicho recurso
-                    
-                    /*
-                    const params = new URLSearchParams();
-                    params.append('pathImagen', this.planta_temp.pathImagen);
-                    params.append('info', this.planta_temp.info);
-                    params.append('nAlterno', this.planta_temp.nAlterno);
-                    params.append('nCientifico', this.planta_temp.nCientifico);
-                    params.append('nombre', this.planta_temp.nombre);
-                    */
+                    //--RESUELTO--
 
                     const qs = require('qs');
-
-/*
-                    formData.append('pathImagen', this.planta_temp.pathImagen);
-                    formData.append('info', this.planta_temp.info);
-                    formData.append('nAlterno', this.planta_temp.nAlterno);
-                    formData.append('nCientifico', this.planta_temp.nCientifico);
-                    formData.append('nombre', this.planta_temp.nombre);
-*/
-
                     const res = await axios.put('/plantas/'+this.planta_temp.id, qs.stringify(this.planta_temp));
+
+                    if(document.getElementById("file-modal").value != ''){
+                        var formData = new FormData();
+                        formData.append('plantaId', this.planta_temp.id);
+                        formData.append('pathImagen', this.planta_temp.pathImagen, this.planta_temp.pathImagen.name);
+                        const res = await axios.post('/plantas_update_img', formData);
+                    }
                     
                 }else{
                     formData.append('pathImagen', this.planta_temp.pathImagen, this.planta_temp.pathImagen.name);

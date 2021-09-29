@@ -76,14 +76,31 @@ class PlantaController extends Controller
         $planta->ncientifico = $request->nCientifico;
         $planta->nAlterno = $request->nAlterno;
         $planta->info = $request->info;
-     
+        /*
         if($request->hasFile('pathImagen')){
             $planta->pathImagen = substr($request->pathImagen->store('public/planta_img'), 7);
         }
-
+        */
         //$planta->update($new_planta);
         $planta->save();
 
+    }
+
+    /**
+     * Función de controlador enfocada a actualizar
+     * la imagen de una ficha
+     * 
+     *  @param  \Illuminate\Http\Request  $request
+     *  @return \Illuminate\Http\Response
+     */
+    public function updateImg(Request $request)
+    {
+        //$planta = Planta::find($request->plantaId);
+        $planta = Planta::where('id', $request->plantaId)->first();
+        $imagen = substr($request->pathImagen->store('public/planta_img'), 7);
+
+        $planta->pathImagen = $imagen;
+        $planta->save(); 
     }
 
     /**

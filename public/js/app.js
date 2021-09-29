@@ -2036,7 +2036,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
-        var formData, qs, res, _res;
+        var formData, qs, res, _res, _res2;
 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
           while (1) {
@@ -2047,7 +2047,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 console.log(_this2.planta_temp);
 
                 if (!_this2.editandoRegistro) {
-                  _context2.next = 10;
+                  _context2.next = 17;
                   break;
                 }
 
@@ -2057,50 +2057,50 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 //Sospecho que tendré que hacer un recurso enfocado solo
                 //a la actualizacion de la imagen y definir las conficiones
                 //para usar dicho recurso
-
-                /*
-                const params = new URLSearchParams();
-                params.append('pathImagen', this.planta_temp.pathImagen);
-                params.append('info', this.planta_temp.info);
-                params.append('nAlterno', this.planta_temp.nAlterno);
-                params.append('nCientifico', this.planta_temp.nCientifico);
-                params.append('nombre', this.planta_temp.nombre);
-                */
+                //--RESUELTO--
                 qs = __webpack_require__(/*! qs */ "./node_modules/qs/lib/index.js");
-                /*
-                                    formData.append('pathImagen', this.planta_temp.pathImagen);
-                                    formData.append('info', this.planta_temp.info);
-                                    formData.append('nAlterno', this.planta_temp.nAlterno);
-                                    formData.append('nCientifico', this.planta_temp.nCientifico);
-                                    formData.append('nombre', this.planta_temp.nombre);
-                */
-
                 _context2.next = 7;
                 return axios.put('/plantas/' + _this2.planta_temp.id, qs.stringify(_this2.planta_temp));
 
               case 7:
                 res = _context2.sent;
-                _context2.next = 18;
+
+                if (!(document.getElementById("file-modal").value != '')) {
+                  _context2.next = 15;
+                  break;
+                }
+
+                formData = new FormData();
+                formData.append('plantaId', _this2.planta_temp.id);
+                formData.append('pathImagen', _this2.planta_temp.pathImagen, _this2.planta_temp.pathImagen.name);
+                _context2.next = 14;
+                return axios.post('/plantas_update_img', formData);
+
+              case 14:
+                _res = _context2.sent;
+
+              case 15:
+                _context2.next = 25;
                 break;
 
-              case 10:
+              case 17:
                 formData.append('pathImagen', _this2.planta_temp.pathImagen, _this2.planta_temp.pathImagen.name);
                 formData.append('info', _this2.planta_temp.info);
                 formData.append('nAlterno', _this2.planta_temp.nAlterno);
                 formData.append('nCientifico', _this2.planta_temp.nCientifico);
                 formData.append('nombre', _this2.planta_temp.nombre);
-                _context2.next = 17;
+                _context2.next = 24;
                 return axios.post('/plantas', formData);
 
-              case 17:
-                _res = _context2.sent;
+              case 24:
+                _res2 = _context2.sent;
 
-              case 18:
+              case 25:
                 _this2.cerrarModal();
 
                 _this2.listar();
 
-              case 20:
+              case 27:
               case "end":
                 return _context2.stop();
             }
