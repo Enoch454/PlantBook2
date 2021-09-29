@@ -112,7 +112,7 @@ class PlantaController extends Controller
     public function destroy(Planta $planta)
     {
         //
-        $planta->destroy();
+        $planta->delete();
 
     }
 }

@@ -1971,6 +1971,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -2168,6 +2171,33 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return lista;
+    },
+    //Genera un request por metodo delete para eliminar
+    //la ficha indicada
+    eliminarFicha: function eliminarFicha(id) {
+      var _this3 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
+        var res;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return axios["delete"]('/plantas/' + id);
+
+              case 2:
+                res = _context3.sent;
+
+                _this3.listar();
+
+              case 4:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }))();
     }
   },
   created: function created() {
@@ -40316,6 +40346,33 @@ var render = function() {
                 staticClass: "col-lg-3 col-md-4 col-xs-6 thumb"
               },
               [
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: {
+                      type: "button",
+                      "data-dismiss": "modal",
+                      "aria-label": "Close"
+                    },
+                    on: {
+                      click: function($event) {
+                        return _vm.eliminarFicha(planta.id)
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "span",
+                      {
+                        staticClass: "btn btn-danger",
+                        attrs: { "aria-hidden": "true" }
+                      },
+                      [_vm._v("×")]
+                    )
+                  ]
+                ),
+                _vm._v(" "),
                 _c(
                   "div",
                   {

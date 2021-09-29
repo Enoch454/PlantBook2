@@ -69,6 +69,9 @@
                 <div v-for="planta in this.filtrar_lista(lista_plantas)"
                     :key="planta.id" 
                     class="col-lg-3 col-md-4 col-xs-6 thumb">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="eliminarFicha(planta.id);">
+                        <span class="btn btn-danger" aria-hidden="true">&times;</span>
+                    </button>
                     <div
                         @click="editandoRegistro = true; abrirModal(planta)"
                         class="fancybox"
@@ -241,7 +244,14 @@
                     }
                 }
                 return lista;
-            }
+            },
+
+            //Genera un request por metodo delete para eliminar
+            //la ficha indicada
+            async eliminarFicha(id){
+                const res = await axios.delete('/plantas/'+id);
+                this.listar();
+            },
 
         },
         created() {
