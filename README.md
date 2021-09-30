@@ -13,7 +13,7 @@ En la primera pantalla se le permite ver a cualquiera las plantas que tiene el c
 Cada imagen que hay al inicio puede abrirse para ver una ficha con los datos sobre esa planta.
 
 ![Screenshot Login](/doc_images/06.png?raw=true "Screenshot Login")<br/>
-Si el administrador desea cambiar el contenido de la pagina tendrá que ingresar por esta [url](http://plantbookenoch45.herokuapp.com/login) la cual no tiene acceso visible en la pagina 'home'. Si desea, puede ingresar usando la contraseña "VUBaV".
+Si el administrador desea cambiar el contenido de la pagina tendrá que ingresar por esta [url](http://plantbookenoch45.herokuapp.com/login) la cual no tiene acceso visible en la pagina 'home'. Si desea, puede ingresar usando la contraseña "password".
 
 ![Screenshot Dashboard](/doc_images/02.png?raw=true "Screenshot Dashboard")<br/>
 ![Screenshot Edit](/doc_images/03.png?raw=true "Screenshot Edit")<br/>
